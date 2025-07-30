@@ -1,6 +1,7 @@
 import pygame
 from data.config.settings import *
 from src.player import Player
+from src.ui import UI
 
 class Farm:
 	def __init__(self):
@@ -11,6 +12,7 @@ class Farm:
 		self.all_sprites = pygame.sprite.Group()
 
 		self.setup()
+		self.ui = UI(self.player)
 
 	def setup(self):
 		self.player = Player((640, 360), self.all_sprites)
@@ -19,3 +21,5 @@ class Farm:
 		self.display_surface.fill('black')
 		self.all_sprites.draw(self.display_surface)
 		self.all_sprites.update(dt)
+
+		self.ui.display()
