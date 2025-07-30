@@ -13,6 +13,7 @@ class Farm:
 
 		# Sprite groups
 		self.all_sprites = CameraGroup()
+		self.collision_sprites = pygame.sprite.Group()
 
 		self.setup()
 		self.ui = UI(self.player)
@@ -31,7 +32,7 @@ class Farm:
 
 		# Fence
 		for x, y, surf in tmx_data.get_layer_by_name('Fence').tiles():
-			Generic((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
+			Generic((x * TILE_SIZE, y * TILE_SIZE), surf, [self.all_sprites, self.collision_sprites])
 
 		# Water
 		water_frames = import_folder('assets/sprites/water')
@@ -40,13 +41,20 @@ class Farm:
 
 		# Trees
 		for obj in tmx_data.get_layer_by_name('Trees'):
-			Tree((obj.x, obj.y), obj.image, self.all_sprites, obj.name)
+			Tree((obj.x, obj.y), obj.image, [self.all_sprites, self.collision_sprites], obj.name)
 
 		# Wild Flowers
 		for obj in tmx_data.get_layer_by_name('Decoration'):
-			WildFlower((obj.x, obj.y), surf = obj.image, groups = self.all_sprites)
+			WildFlower((obj.x, obj.y), obj.image, [self.all_sprites, self.collision_sprites])
 
-		self.player = Player((640, 360), self.all_sprites)
+		# Collision tiles
+		for x, y, surf in tmx_data.get_layer_by_name('Collision').tiles():
+			Generic((x * TILE_SIZE, y * TILE_SIZE), pygame.Surface((TILE_SIZE, TILE_SIZE)), self.collision_sprites)
+
+		# Player
+		for obj in tmx_data.get_layer_by_name('Player'):
+			if obj.name == 'Start':
+				self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
 		Generic(
 			pos = (0,0),
 			surf = pygame.image.load('assets/sprites/world/ground.png').convert_alpha(),
