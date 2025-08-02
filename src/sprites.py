@@ -16,7 +16,7 @@ class Interaction(Generic):
 		surf = pygame.Surface(size)
 		super().__init__(pos, surf, groups)
 		self.name = name
-		
+
 
 class Particle(Generic):
 	def __init__(self, pos, surf, groups, z, duration = 200):
@@ -71,7 +71,6 @@ class Tree(Generic):
 		self.alive = True
 		stump_path = f'assets/sprites/stumps/{"small" if name == "Small" else "large"}.png'
 		self.stump_surf = pygame.image.load(stump_path).convert_alpha()
-		self.invul_timer = Timer(200)
 
 		# Apples
 		self.apple_surf = pygame.image.load('assets/sprites/fruit/apple.png')
@@ -81,9 +80,15 @@ class Tree(Generic):
 
 		self.player_add = player_add
 
+		# Sounds
+		self.axe_sound = pygame.mixer.Sound('assets/audio/axe.mp3')
+
 	def damage(self):
 		# Damaging the tree
 		self.health -= 1
+
+		# Play sound
+		self.axe_sound.play()
 
 		# Remove an apple
 		if len(self.apple_sprites.sprites()) > 0:
