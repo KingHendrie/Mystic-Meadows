@@ -90,6 +90,9 @@ class Farm:
 		self.player.item_inventory[item] += 1
 
 	def reset(self):
+		# Soil
+		self.soil_layer.remove_water()
+
 		# Apples on trees
 		for tree in self.tree_sprites.sprites():
 			for apple in tree.apple_sprites.sprites():
@@ -105,7 +108,7 @@ class Farm:
 		self.ui.display()
 
 		if self.player.sleep:
-			self.transition.play(dt)
+			self.transition.play()
 
 		# print(self.player.item_inventory)  # Debug: Print inventory to console
 
