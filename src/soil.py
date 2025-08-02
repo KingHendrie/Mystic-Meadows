@@ -160,7 +160,7 @@ class SoilLayer():
 	def plant_seed(self, target_pos, seed):
 		for soil_sprite in self.soil_sprites.sprites():
 			if soil_sprite.rect.collidepoint(target_pos):
-				self.plant_seed.play()
+				self.plant_sound.play()
 
 				x = soil_sprite.rect.x // TILE_SIZE
 				y = soil_sprite.rect.y // TILE_SIZE
