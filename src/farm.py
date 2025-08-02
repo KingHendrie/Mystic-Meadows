@@ -5,7 +5,8 @@ from src.ui import UI
 from src.sprites import Generic, Water, WildFlower, Tree, Interaction
 from pytmx.util_pygame import load_pygame
 from src.utils import *
-from transition import Transition
+from src.transition import Transition
+from src.soil import SoilLayer
 
 class Farm:
 	def __init__(self):
@@ -18,6 +19,7 @@ class Farm:
 		self.tree_sprites = pygame.sprite.Group()
 		self.interaction_sprites = pygame.sprite.Group()
 
+		self.soil_layer = SoilLayer(self.all_sprites)
 		self.setup()
 		self.ui = UI(self.player)
 		self.transition = Transition(self.reset, self.player)
@@ -68,7 +70,8 @@ class Farm:
 					group = self.all_sprites, 
 					collision_sprites = self.collision_sprites,
 					tree_sprites = self.tree_sprites,
-					interaction = self.interaction_sprites)
+					interaction = self.interaction_sprites,
+					soil_layer = self.soil_layer)
 
 			if obj.name == 'Bed':
 				Interaction(
