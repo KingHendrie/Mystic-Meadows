@@ -2,7 +2,7 @@ import pygame
 from data.config.settings import *
 from src.player import Player
 from src.ui import UI
-from src.sprites import Generic, Water, WildFlower, Tree, Interaction
+from src.sprites import Generic, Water, WildFlower, Tree, Interaction, Particle
 from pytmx.util_pygame import load_pygame
 from src.utils import *
 from src.transition import Transition
@@ -115,11 +115,25 @@ class Farm:
 				apple.kill()
 			tree.create_fruit()
 
+	def plant_collision(self):
+		if self.soil_layer.plant_sprites:
+			for plant in self.soil_layer.plant_sprites.sprites():
+				if plant.harvestable and plant.rect.colliderect(self.player.hitbox):
+					self.player_add(plant.plant_type)
+					plant.kill()
+					Particle(
+						pos = plant.rect.topleft,
+						surf = plant.image,
+						groups = self.all_sprites,
+						z = LAYERS['main'])
+					self.soil_layer.grid[plant.rect.centery // TILE_SIZE][plant.rect.centerx // TILE_SIZE].remove('P')
+					
 	def run(self, dt):
 		self.display_surface.fill('black')
 		# self.all_sprites.draw(self.display_surface)
 		self.all_sprites.custom_draw(self.player)
 		self.all_sprites.update(dt)
+		self.plant_collision()
 
 		self.ui.display()
 
