@@ -2,9 +2,10 @@ import pygame
 from data.config.settings import *
 from src.player import Player
 from src.ui import UI
-from src.sprites import Generic, Water, WildFlower, Tree
+from src.sprites import Generic, Water, WildFlower, Tree, Interaction
 from pytmx.util_pygame import load_pygame
 from src.utils import *
+from transition import Transition
 
 class Farm:
 	def __init__(self):
@@ -15,9 +16,11 @@ class Farm:
 		self.all_sprites = CameraGroup()
 		self.collision_sprites = pygame.sprite.Group()
 		self.tree_sprites = pygame.sprite.Group()
+		self.interaction_sprites = pygame.sprite.Group()
 
 		self.setup()
 		self.ui = UI(self.player)
+		self.transition = Transition(self.reset, self.player)
 
 	def setup(self):
 		tmx_data = load_pygame('data/map.tmx')
@@ -64,7 +67,16 @@ class Farm:
 					pos = (obj.x, obj.y), 
 					group = self.all_sprites, 
 					collision_sprites = self.collision_sprites,
-					tree_sprites = self.tree_sprites)
+					tree_sprites = self.tree_sprites,
+					interaction = self.interaction_sprites)
+
+			if obj.name == 'Bed':
+				Interaction(
+					pos = (obj.x, obj.y),
+					size = (obj.width, obj.height),
+					groups = self.interaction_sprites,
+					name = obj.name)
+			
 		Generic(
 			pos = (0,0),
 			surf = pygame.image.load('assets/sprites/world/ground.png').convert_alpha(),
@@ -74,6 +86,13 @@ class Farm:
 	def player_add(self, item):
 		self.player.item_inventory[item] += 1
 
+	def reset(self):
+		# Apples on trees
+		for tree in self.tree_sprites.sprites():
+			for apple in tree.apple_sprites.sprites():
+				apple.kill()
+			tree.create_fruit()
+
 	def run(self, dt):
 		self.display_surface.fill('black')
 		# self.all_sprites.draw(self.display_surface)
@@ -81,6 +100,10 @@ class Farm:
 		self.all_sprites.update(dt)
 
 		self.ui.display()
+
+		if self.player.sleep:
+			self.transition.play(dt)
+
 		# print(self.player.item_inventory)  # Debug: Print inventory to console
 
 class CameraGroup(pygame.sprite.Group):
