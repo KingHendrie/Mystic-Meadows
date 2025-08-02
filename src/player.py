@@ -38,6 +38,14 @@ class Player(pygame.sprite.Sprite):
 		self.tool_index = 0
 		self.selected_tool = self.tools[self.tool_index]
 
+		# Inventory
+		self.item_inventory = {
+			'wood': 0,
+			'apple': 0,
+			'corn': 0,
+			'tomato': 0
+		}
+
 		# Seeds
 		self.seeds = ['corn', 'tomato']
 		self.seed_index = 0
