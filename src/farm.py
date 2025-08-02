@@ -14,6 +14,7 @@ class Farm:
 		# Sprite groups
 		self.all_sprites = CameraGroup()
 		self.collision_sprites = pygame.sprite.Group()
+		self.tree_sprites = pygame.sprite.Group()
 
 		self.setup()
 		self.ui = UI(self.player)
@@ -41,7 +42,7 @@ class Farm:
 
 		# Trees
 		for obj in tmx_data.get_layer_by_name('Trees'):
-			Tree((obj.x, obj.y), obj.image, [self.all_sprites, self.collision_sprites], obj.name)
+			Tree((obj.x, obj.y), obj.image, [self.all_sprites, self.collision_sprites, self.tree_sprites], obj.name)
 
 		# Wild Flowers
 		for obj in tmx_data.get_layer_by_name('Decoration'):
@@ -54,7 +55,11 @@ class Farm:
 		# Player
 		for obj in tmx_data.get_layer_by_name('Player'):
 			if obj.name == 'Start':
-				self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
+				self.player = Player(
+					pos = (obj.x, obj.y), 
+					group = self.all_sprites, 
+					collision_sprites = self.collision_sprites,
+					tree_sprites = self.tree_sprites)
 		Generic(
 			pos = (0,0),
 			surf = pygame.image.load('assets/sprites/world/ground.png').convert_alpha(),
@@ -85,3 +90,11 @@ class CameraGroup(pygame.sprite.Group):
 					offset_rect = sprite.rect.copy()
 					offset_rect.center -= self.offset
 					self.display_surface.blit(sprite.image, offset_rect)
+
+					# Debug
+					# if sprite == player:
+					# 	pygame.draw.rect(self.display_surface, 'red', offset_rect, 5)
+					# 	hitbox_rect = player.hitbox.copy()
+					# 	hitbox_rect.center = offset_rect.center
+					# 	pygame.draw.rect = offset_rect.center + PLAYER_TOOL_OFFSET[player.status.split('_')[0]]
+					# 	pygame.draw.rect(self.display_surface, 'blue', hitbox_rect, 5)
